@@ -40,6 +40,21 @@ class User(AbstractUser):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    groups = models.ManyToManyField(
+        'auth.Group',
+        related_name='custom_user_set',  
+        blank=True,
+        help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.',
+        verbose_name='groups',
+    )
+    user_permissions = models.ManyToManyField(
+        'auth.Permission',
+        related_name='custom_user_set', 
+        blank=True,
+        help_text='Specific permissions for this user.',
+        verbose_name='user permissions',
+    )
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'phone', 'first_name', 'last_name']
 
@@ -47,14 +62,10 @@ class User(AbstractUser):
         return f"{self.first_name} {self.last_name}"
 
 class UserDocument(models.Model):
-    DOCUMENT_TYPES = [
-        ('Aadhar Card', 'Aadhar Card'),
-        ('PAN Card', 'PAN Card'),
-        ('Resume', 'Resume'),
-    ]
+    
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="documents")
-    document_type = models.CharField(max_length=50, choices=DOCUMENT_TYPES)
-    document_file = models.FileField(upload_to='user_documents/')
+    addhar_card = models.FileField(upload_to='user_documents/')
+    pan_card = models.FileField(upload_to='user_documents/' , null= True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
